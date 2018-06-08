@@ -14,10 +14,10 @@ class LoginView(web.View):
         data = await self.request.post()
         req = self.request.app['connection']
         number_of_users = await req.get('last-user-id')
-        for i in range(1, int(number_of_users.decode('utf-8')) + 1):
-            user = await req.get('username:' + str(i))
+        for each in range(1, int(number_of_users.decode('utf-8')) + 1):
+            user = await req.get('username:' + str(each))
             if user.decode('utf-8') == data.get('username'):
-                password = await req.get('password:username:' + str(i))
+                password = await req.get('password:username:' + str(each))
                 if bcrypt.checkpw(data.get('password').encode('utf-8'), password):
                     response = web.HTTPFound('/')
                     response.set_cookie('user', data.get('username'))

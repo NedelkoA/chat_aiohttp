@@ -24,12 +24,31 @@ async def auth_cookie_factory(app, handler):
     return auth_cookie_handler
 
 
-middlewares = [auth_cookie_factory]
-app = web.Application(middlewares=middlewares)
-aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
-app['static_root_url'] = '/static'
-app.on_startup.append(init_db)
-setup_routes(app)
-app['config'] = config
-app.on_cleanup.append(close_redis)
-web.run_app(app)
+async def close_websockets(app):
+    for ws in app['websockets']:
+        await ws.close(code=1000, message='Server shutdown')
+    app['websockets'].clear()
+
+
+async def create_app():
+    middlewares = [auth_cookie_factory]
+    app = web.Application(middlewares=middlewares)
+    aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
+    app['static_root_url'] = '/static'
+    app.on_startup.append(init_db)
+    setup_routes(app)
+    app['config'] = config
+    app['websockets'] = []
+    app.on_shutdown.append(close_websockets)
+    app.on_cleanup.append(close_redis)
+
+    return app
+
+
+def main():
+    app = create_app()
+    web.run_app(app)
+
+
+if __name__ == '__main__':
+    main()

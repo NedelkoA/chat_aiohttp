@@ -1,5 +1,5 @@
-$(function(){
-    var socket = new WebSocket("ws://0.0.0.0:8080");
+$(function() {
+    var socket = new WebSocket("ws://0.0.0.0:8080/ws");
     socket.onopen = function() {
         alert("Соединение установлено.");
     };
@@ -9,8 +9,8 @@ $(function(){
         } else {
             alert('Обрыв соединения');
         }
-         alert('Код: ' + event.code + ' причина: ' + event.reason);
-    };
+            alert('Код: ' + event.code + ' причина: ' + event.reason);
+        };
     socket.onmessage = function(event) {
         alert("Получены данные " + event.data);
     };
@@ -18,7 +18,8 @@ $(function(){
         alert("Ошибка " + error.message);
     };
     $('#send').on('click', function() {
-        var text = $('#text').val()
-        socket.send(text)
+        var text = document.getElementById("message-field").value;
+        socket.send(text);
+        return false;
     });
 });

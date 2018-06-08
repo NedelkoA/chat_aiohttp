@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <title>Title</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js">
+    </script>
+    <title>{{ title }}</title>
 </head>
 <body>
+    <textarea cols="60" rows="20" style="resize: none">
     {% for message in messages %}
-        <p>{{ message }}</p>
+        {{ message[1] }}: {{ message[0] }}
     {% endfor%}
+    </textarea>
     <form id="chatform">
         <input type="text" id="message-field">
         <input type="button" id="send" value="Send">
     </form>
 </body>
-<script type="text/javascript">
-    {% include "/js/ws.js" %}
-</script>
+<script src="{{ static('js/ws.js') }}"></script>
 </html>
