@@ -1,0 +1,13 @@
+header {
+    padding: 10px 10px 20px 10px;
+    font-size: 1.3em;
+}
+#id_signin { margin-top: 20px; }
+#chatform { margin-top: 10px; }
+#chat {
+    width: 400px;
+    height: 300px;
+    overflow: auto;
+    border: 1px solid silver;
+    padding-left: 10px;
+}

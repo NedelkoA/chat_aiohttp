@@ -1,6 +1,7 @@
 import bcrypt
 from aiohttp import web
 import aiohttp_jinja2
+import json
 
 
 class LoginView(web.View):
@@ -13,12 +14,28 @@ class LoginView(web.View):
     async def post(self):
         data = await self.request.post()
         req = self.request.app['connection']
-        number_of_users = await req.get('last-user-id')
-        for each in range(1, int(number_of_users.decode('utf-8')) + 1):
-            user = await req.get('username:' + str(each))
-            if user.decode('utf-8') == data.get('username'):
-                password = await req.get('password:username:' + str(each))
-                if bcrypt.checkpw(data.get('password').encode('utf-8'), password):
-                    response = web.HTTPFound('/')
-                    response.set_cookie('user', data.get('username'))
-                    return response
+        if await self.check_username(data.get('username'), req):
+            if await self.check_password(data.get('password'), req):
+                response = web.HTTPFound('/')
+                response.set_cookie('user', data.get('username'))
+                return response
+            else:
+                return web.Response(content_type='application/json', text=json.dumps({'error': "Wrong data"}))
+        else:
+            return web.Response(content_type='application/json', text=json.dumps({'error': "Wrong data"}))
+
+    async def check_username(self, name, req):
+        users_key = await req.keys('username:*')
+        name = name.encode('utf-8')
+        for key in users_key:
+            user = await req.get(key)
+            if user == name:
+                return True
+
+    async def check_password(self, pas, req):
+        password_key = await req.keys('password:username:*')
+        pas = pas.encode('utf-8')
+        for key in password_key:
+            password = await req.get(key)
+            if bcrypt.checkpw(pas, password):
+                return True

@@ -41,7 +41,6 @@ async def create_app():
     app['websockets'] = []
     app.on_shutdown.append(close_websockets)
     app.on_cleanup.append(close_redis)
-
     return app
 
 

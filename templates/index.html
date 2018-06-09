@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js">
-    </script>
+{% extends 'base.html' %}
+{% block head %}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <title>{{ title }}</title>
-</head>
-<body>
-    <textarea cols="60" rows="20" style="resize: none">
-    {% for message in messages %}
-        {{ message[1] }}: {{ message[0] }}
-    {% endfor%}
-    </textarea>
+{% endblock %}
+{% block body %}
+    <p>Hello, {{ current_name }} <a href="/logout">Log Out</a></p>
+    <div id="chat">
+        {% for message in messages %}
+        {{ message[0] }}: {{ message[1] }} <br>
+        {% endfor %}
+    </div>
     <form id="chatform">
         <input type="text" id="message-field">
         <input type="button" id="send" value="Send">
     </form>
-</body>
-<script src="{{ static('js/ws.js') }}"></script>
-</html>
+    <script src="{{ static('js/ws.js') }}"></script>
+{% endblock %}

@@ -1,21 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{{ some }}
-<div class="ui three column stackable centered grid">
-    <div class="column">
-        <form action="/signin" method="post">
-            <div class="ui fluid action input">
-                <input type="text" name="username">
-                <input type="text" name="password">
-                <button type="submit" class="ui primary button">Sign in</button>
-            </div>
-        </form>
-    </div>
-</div>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block head %}
+    <title>{{ title }}</title>
+{% endblock %}
+{% block body %}
+    <form action="/signin" method="post">
+        <label for="username">Username</label>
+        <input type="text" name="username" pattern="^[a-zA-Z0-9\s]+$"><br>
+        <label for="password">Password</label>
+        <input type="text" name="password" pattern="^[a-zA-Z0-9]+$"><br>
+        <button type="submit">Sign in</button>
+    </form>
+{% endblock %}

@@ -6,7 +6,7 @@ import bcrypt
 class SignIn(web.View):
     @aiohttp_jinja2.template('signin.html')
     async def get(self):
-        return {'some': 'Please enter data'}
+        return {'title': 'Sign In'}
 
     async def post(self):
         data = await self.request.post()

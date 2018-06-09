@@ -16,8 +16,8 @@ async def ws_heandler(request):
                 web.HTTPFound('/')
                 await req.set("message:" + str(message_num), msg.data)
                 await req.set("user:message:" + str(message_num), current_name)
-            else:
-                break
+                for ws in request.app['websockets']:
+                    await ws.send_json({'text': msg.data, 'name': current_name})
     finally:
         request.app['websockets'].remove(ws)
     return ws
@@ -26,16 +26,22 @@ async def ws_heandler(request):
 @aiohttp_jinja2.template('index.html')
 async def index_handler(request):
     req = request.app['connection']
+    current_name = request.cookies['user']
     count_message = await req.get('last-message-id')
     messages = []
-    for i in range(1, int(count_message.decode('utf-8')) + 1):
-        message = await req.get('message:' + str(i))
-        user = await req.get('user:message:'+ str(i))
+    num_msg = int(count_message.decode('utf-8')) + 1
+    for each in range(1, num_msg):
+        message = await req.get('message:' + str(each))
+        user = await req.get('user:message:' + str(each))
         messages.append(
             (
-                message.decode('utf-8'),
-                user.decode('utf-8')
-            )
-        )
+                user.decode('utf-8'),
+                message.decode('utf-8')
+            ))
+    return {'title': 'Chat', 'messages': messages, 'current_name': current_name}
 
-    return {'title': 'Chat', 'messages': messages}
+
+async def logout_handler(request):
+    response = web.HTTPFound('/login')
+    response.del_cookie('user')
+    return response
